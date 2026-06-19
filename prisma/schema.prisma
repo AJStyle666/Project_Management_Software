@@ -42,19 +42,19 @@ enum NotificationType {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  name        String
-  email       String   @unique
-  password    String
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
 
-  role        Role     @default(MEMBER)
+  role Role @default(MEMBER)
 
-  projects        ProjectMember[]
-  assignedTasks   Task[]
+  projects      ProjectMember[]
+  assignedTasks Task[]
 
-  comments        Comment[]
-  notifications   Notification[]
-  timeEntries     TimeEntry[]
+  comments      Comment[]
+  notifications Notification[]
+  timeEntries   TimeEntry[]
 
   createdProjects Project[] @relation("ProjectOwner")
 
@@ -65,163 +65,163 @@ model User {
 }
 
 model Project {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
 
   name        String
   description String?
 
-  status      ProjectStatus @default(PLANNING)
+  status ProjectStatus @default(PLANNING)
 
-  budget      Float?
+  budget Float?
 
-  ownerId     String
+  ownerId String
 
-  owner       User @relation("ProjectOwner", fields: [ownerId], references: [id])
+  owner User @relation("ProjectOwner", fields: [ownerId], references: [id])
 
-  tasks       Task[]
-  members     ProjectMember[]
-  milestones  Milestone[]
+  tasks      Task[]
+  members    ProjectMember[]
+  milestones Milestone[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([ownerId])
 }
 
 model ProjectMember {
-  id        String @id @default(cuid())
+  id String @id @default(cuid())
 
   userId    String
   projectId String
 
-  user      User @relation(fields: [userId], references: [id])
-  project   Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
 
-  joinedAt  DateTime @default(now())
+  joinedAt DateTime @default(now())
 
   @@unique([userId, projectId])
 }
 
 model Task {
-  id              String @id @default(cuid())
+  id String @id @default(cuid())
 
-  title           String
-  description     String?
+  title       String
+  description String?
 
-  status          TaskStatus @default(TODO)
+  status TaskStatus @default(TODO)
 
-  priority        Priority @default(MEDIUM)
+  priority Priority @default(MEDIUM)
 
-  dueDate         DateTime?
+  dueDate DateTime?
 
-  estimatedHours  Float?
-  actualHours     Float?
+  estimatedHours Float?
+  actualHours    Float?
 
-  projectId       String
-  assigneeId      String?
+  projectId  String
+  assigneeId String?
 
-  parentTaskId    String?
+  parentTaskId String?
 
-  project         Project @relation(fields: [projectId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
 
-  assignee        User? @relation(fields: [assigneeId], references: [id])
+  assignee User? @relation(fields: [assigneeId], references: [id])
 
-  parentTask      Task? @relation("TaskHierarchy", fields: [parentTaskId], references: [id])
-  subtasks        Task[] @relation("TaskHierarchy")
+  parentTask Task?  @relation("TaskHierarchy", fields: [parentTaskId], references: [id])
+  subtasks   Task[] @relation("TaskHierarchy")
 
-  comments        Comment[]
-  attachments     Attachment[]
-  timeEntries     TimeEntry[]
+  comments    Comment[]
+  attachments Attachment[]
+  timeEntries TimeEntry[]
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([projectId])
   @@index([assigneeId])
 }
 
 model Comment {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
 
-  content     String
+  content String
 
-  taskId      String
-  userId      String
+  taskId String
+  userId String
 
-  task        Task @relation(fields: [taskId], references: [id])
-  user        User @relation(fields: [userId], references: [id])
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([taskId])
 }
 
 model Attachment {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
 
-  name        String
-  fileUrl     String
+  name    String
+  fileUrl String
 
-  taskId      String
+  taskId String
 
-  task        Task @relation(fields: [taskId], references: [id])
+  task Task @relation(fields: [taskId], references: [id])
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([taskId])
 }
 
 model Notification {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
 
-  title       String
-  message     String
+  title   String
+  message String
 
-  type        NotificationType
+  type NotificationType
 
-  isRead      Boolean @default(false)
+  isRead Boolean @default(false)
 
-  userId      String
+  userId String
 
-  user        User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([userId])
 }
 
 model Milestone {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
 
   title       String
   description String?
 
-  dueDate     DateTime
+  dueDate DateTime
 
-  projectId   String
+  projectId String
 
-  project     Project @relation(fields: [projectId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([projectId])
 }
 
 model TimeEntry {
-  id          String @id @default(cuid())
+  id String @id @default(cuid())
 
-  hours       Float
+  hours Float
 
   description String?
 
-  taskId      String
-  userId      String
+  taskId String
+  userId String
 
-  task        Task @relation(fields: [taskId], references: [id])
+  task Task @relation(fields: [taskId], references: [id])
 
-  user        User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([taskId])
   @@index([userId])
